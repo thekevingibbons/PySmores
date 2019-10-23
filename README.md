@@ -1,4 +1,4 @@
-### The hook: your database operations have been simplified to .get(), .save(), and .delete(), no serialization or other boilerplate necessary. It's Python objects all the way down. Intrigued? Read on. 
+### The hook: your database operations have been simplified to .get(), .save(), and .delete(), no serialization or other boilerplate necessary. It's Python objects all the way down.
 
 **Note:** PySmores is not production-ready and is being actively improved. When it reaches a highly stable state, I'll create a PyPi package for easy import. Until then, use at your own risk.  
 
