@@ -1,0 +1,47 @@
+# ----------------------------------------------------------------------------------------------------------------------
+# Schema definition
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Import Marshmallow modules
+from marshmallow import Schema, fields, post_load
+
+# Import nested object schemas from elsewhere in your project
+from models.Owner import OwnerSchema
+
+# Every first-level schema should inherit from Schema, though if you have schemas that inherit from CarSchema, they should inherit
+# CarSchema instead of schema
+class CarSchema(Schema):
+    id = fields.String() # Required by PySmores (for now, working on using the BSON object _id instead)
+    currentOwner = fields.Nested(Driver) # Like all fields, Nested comes from Marshmallow and allows us to nest objects under each other
+    # For dictionaries, you can optionally enforce key and value types, including Nested. 
+    previousOwners = fields.Dict(keys = fields.Date(allow_none = False), values = fields.Nested(OwnerSchema, allow_none= False))
+    year = fields.Integer()  # See the Marshmallow documentation (called out in the README) for details on other fields 
+
+    # All Marshmallow objects need to be able to create themselves. passing data as a set of key arguments using **data will always suffice. 
+    # The name of this function can be whatever you want, though I suggest using something obvious and universal like create_<objectName>
+    @post_load
+    def create_car(self, data):
+        return Car(**data)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Class definition
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Always import PySmores :) 
+from models.PySmores import PySmores 
+
+# Every first-level object should inherit from PySmores, though if you have objects that inherit from Car, they should inherit
+# Car instead of PySmores 
+class Car(PySmores):
+    collection = "Cars" # Name of the collection where we will save off Car objects 
+    schema = PySmores.instantiateSchemaWithJit(CarSchema) # Makes your database operations ~fast~. If you don't use instantiateSchemaWithJit,
+    # you still have to set schema equal to a valid schema instance, i.e. CarSchema(). I highly advise using the instantiateSchemaWithJit 
+    # call though, as it is faster, future-proof, and there's really no reason to not. 
+
+    # Constructor should include a parameter for each attribute you're saving/loading 
+    def __init__(self, id, previousOwners, year):
+        # Assign the values passed in to attributes to create your object 
+        self.id = id
+        self.previousOwners = previousOwners
+        self.year = year
