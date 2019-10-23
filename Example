@@ -29,7 +29,7 @@ class CarSchema(Schema):
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Always import PySmores :) 
-from models.PySmores import PySmores 
+from PySmores import PySmores 
 
 # Every first-level object should inherit from PySmores, though if you have objects that inherit from Car, they should inherit
 # Car instead of PySmores 
